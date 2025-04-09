@@ -1,7 +1,7 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { useAuth } from '../context/AuthContext';
+import { useEffect, useState } from "react";
+import { useAuth } from "../context/AuthContext";
 import {
   LineChart,
   Line,
@@ -13,60 +13,60 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-} from 'recharts';
+} from "recharts";
 import {
   CurrencyDollarIcon,
   ShoppingCartIcon,
   UsersIcon,
   ChartBarIcon,
-} from '@heroicons/react/24/outline';
+} from "@heroicons/react/24/outline";
 
 // Mock data - replace with real data from your backend
 const revenueData = [
-  { month: 'Jan', revenue: 4000 },
-  { month: 'Feb', revenue: 3000 },
-  { month: 'Mar', revenue: 5000 },
-  { month: 'Apr', revenue: 4500 },
-  { month: 'May', revenue: 6000 },
-  { month: 'Jun', revenue: 5500 },
+  { month: "Jan", revenue: 4000 },
+  { month: "Feb", revenue: 3000 },
+  { month: "Mar", revenue: 5000 },
+  { month: "Apr", revenue: 4500 },
+  { month: "May", revenue: 6000 },
+  { month: "Jun", revenue: 5500 },
 ];
 
 const orderData = [
-  { month: 'Jan', orders: 240 },
-  { month: 'Feb', orders: 139 },
-  { month: 'Mar', orders: 380 },
-  { month: 'Apr', orders: 290 },
-  { month: 'May', orders: 430 },
-  { month: 'Jun', orders: 350 },
+  { month: "Jan", orders: 240 },
+  { month: "Feb", orders: 139 },
+  { month: "Mar", orders: 380 },
+  { month: "Apr", orders: 290 },
+  { month: "May", orders: 430 },
+  { month: "Jun", orders: 350 },
 ];
 
 const stats = [
   {
-    name: 'Total Revenue',
-    value: '$24,500',
-    change: '+12%',
-    changeType: 'positive',
+    name: "Total Revenue",
+    value: "$24,500",
+    change: "+12%",
+    changeType: "positive",
     icon: CurrencyDollarIcon,
   },
   {
-    name: 'Total Orders',
-    value: '1,830',
-    change: '+8%',
-    changeType: 'positive',
+    name: "Total Orders",
+    value: "1,830",
+    change: "+8%",
+    changeType: "positive",
     icon: ShoppingCartIcon,
   },
   {
-    name: 'Total Users',
-    value: '3,240',
-    change: '+15%',
-    changeType: 'positive',
+    name: "Total Users",
+    value: "3,240",
+    change: "+15%",
+    changeType: "positive",
     icon: UsersIcon,
   },
   {
-    name: 'Average Order Value',
-    value: '$89.50',
-    change: '+5%',
-    changeType: 'positive',
+    name: "Average Order Value",
+    value: "$89.50",
+    change: "+5%",
+    changeType: "positive",
     icon: ChartBarIcon,
   },
 ];
@@ -88,7 +88,7 @@ export default function AdminDashboard() {
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -105,7 +105,9 @@ export default function AdminDashboard() {
       <div className="py-6">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Dashboard</h1>
+            <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+              Dashboard
+            </h1>
             <button
               onClick={handleLogout}
               className="px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 dark:focus:ring-offset-gray-800"
@@ -140,9 +142,9 @@ export default function AdminDashboard() {
                           </div>
                           <div
                             className={`ml-2 flex items-baseline text-sm font-semibold ${
-                              item.changeType === 'positive'
-                                ? 'text-green-600 dark:text-green-400'
-                                : 'text-red-600 dark:text-red-400'
+                              item.changeType === "positive"
+                                ? "text-green-600 dark:text-green-400"
+                                : "text-red-600 dark:text-red-400"
                             }`}
                           >
                             {item.change}
@@ -169,12 +171,12 @@ export default function AdminDashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="month" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#1F2937',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        color: '#F3F4F6'
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1F2937",
+                        border: "none",
+                        borderRadius: "0.375rem",
+                        color: "#F3F4F6",
                       }}
                     />
                     <Legend />
@@ -200,12 +202,12 @@ export default function AdminDashboard() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
                     <XAxis dataKey="month" stroke="#9CA3AF" />
                     <YAxis stroke="#9CA3AF" />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: '#1F2937',
-                        border: 'none',
-                        borderRadius: '0.375rem',
-                        color: '#F3F4F6'
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: "#1F2937",
+                        border: "none",
+                        borderRadius: "0.375rem",
+                        color: "#F3F4F6",
                       }}
                     />
                     <Legend />
@@ -219,4 +221,4 @@ export default function AdminDashboard() {
       </div>
     </div>
   );
-} 
+}

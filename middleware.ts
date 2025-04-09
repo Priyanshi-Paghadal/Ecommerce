@@ -5,9 +5,10 @@ export function middleware(request: NextRequest) {
   const authCookie = request.cookies.get('auth');
   const isAdminRoute = request.nextUrl.pathname.startsWith('/admin');
   const isLoginPage = request.nextUrl.pathname === '/admin/login';
+  const isSignupPage = request.nextUrl.pathname === '/admin/signup';
 
   // If trying to access admin routes without auth, redirect to login
-  if (isAdminRoute && !authCookie && !isLoginPage) {
+  if (isAdminRoute && !authCookie && !isLoginPage && !isSignupPage) {
     return NextResponse.redirect(new URL('/admin/login', request.url));
   }
 

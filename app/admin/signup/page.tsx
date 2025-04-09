@@ -1,41 +1,47 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '../../context/AuthContext';
 import Link from 'next/link';
 
-export default function AdminLogin() {
+export default function AdminSignup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [localError, setLocalError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login, error: authError, user, isAdmin } = useAuth();
-
-  useEffect(() => {
-    if (authError) {
-      setLocalError(authError);
-    }
-  }, [authError]);
-
-  useEffect(() => {
-    if (user && isAdmin) {
-      router.push('/admin');
-    } else if (user && !isAdmin) {
-      setLocalError('You do not have admin privileges. Please contact an administrator.');
-    }
-  }, [user, isAdmin, router]);
+  const { signup } = useAuth();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLocalError('');
+
+    // Validate passwords match
+    if (password !== confirmPassword) {
+      setLocalError('Passwords do not match');
+      return;
+    }
+
+    // Validate password length
+    if (password.length < 6) {
+      setLocalError('Password must be at least 6 characters long');
+      return;
+    }
+
     setLoading(true);
 
     try {
-      await login(email, password);
+      await signup(email, password);
+      router.push('/admin/login');
     } catch (error) {
-      console.error('Login error:', error);
+      console.error('Signup error:', error);
+      if (error instanceof Error) {
+        setLocalError(error.message);
+      } else {
+        setLocalError('An error occurred during signup');
+      }
     } finally {
       setLoading(false);
     }
@@ -46,10 +52,10 @@ export default function AdminLogin() {
       <div className="max-w-md w-full space-y-8">
         <div>
           <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900 dark:text-white">
-            Admin Login
+            Create Admin Account
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 dark:text-gray-400">
-            Please sign in to access the admin panel
+            Sign up for an admin account to manage the store
           </p>
         </div>
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
@@ -78,12 +84,28 @@ export default function AdminLogin() {
                 id="password"
                 name="password"
                 type="password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700"
                 placeholder="Password"
+              />
+            </div>
+            <div>
+              <label htmlFor="confirm-password" className="sr-only">
+                Confirm Password
+              </label>
+              <input
+                id="confirm-password"
+                name="confirm-password"
+                type="password"
+                autoComplete="new-password"
+                required
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 dark:border-gray-600 placeholder-gray-500 dark:placeholder-gray-400 text-gray-900 dark:text-white rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm dark:bg-gray-700"
+                placeholder="Confirm Password"
               />
             </div>
           </div>
@@ -128,16 +150,16 @@ export default function AdminLogin() {
                   </svg>
                 </span>
               ) : null}
-              {loading ? 'Signing in...' : 'Sign in'}
+              {loading ? 'Creating account...' : 'Create account'}
             </button>
           </div>
 
           <div className="text-sm text-center">
             <Link
-              href="/admin/signup"
+              href="/admin/login"
               className="font-medium text-blue-600 hover:text-blue-500 dark:text-blue-400 dark:hover:text-blue-300"
             >
-              Don&apos;t have an admin account? Sign up
+              Already have an admin account? Sign in
             </Link>
           </div>
         </form>

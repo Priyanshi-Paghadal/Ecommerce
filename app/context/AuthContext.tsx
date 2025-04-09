@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { auth } from '../firebase/config';
+import { auth, db } from '../firebase/config';
 import { 
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword, 
@@ -10,9 +10,11 @@ import {
   User,
   AuthError
 } from 'firebase/auth';
+import { doc, getDoc, setDoc } from 'firebase/firestore';
 
 interface AuthContextType {
   user: User | null;
+  isAdmin: boolean;
   loading: boolean;
   error: string | null;
   signup: (email: string, password: string) => Promise<void>;
@@ -22,6 +24,7 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType>({
   user: null,
+  isAdmin: false,
   loading: true,
   error: null,
   signup: async () => {},
@@ -31,12 +34,36 @@ const AuthContext = createContext<AuthContextType>({
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setUser(user);
+      
+      if (user) {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', user.uid));
+          if (!userDoc.exists()) {
+            // Create user document if it doesn't exist
+            await setDoc(doc(db, 'users', user.uid), {
+              role: 'user',
+              email: user.email,
+              createdAt: new Date().toISOString()
+            });
+            setIsAdmin(false);
+          } else {
+            setIsAdmin(userDoc.data()?.role === 'admin');
+          }
+        } catch (error) {
+          console.error('Error checking admin status:', error);
+          setIsAdmin(false);
+        }
+      } else {
+        setIsAdmin(false);
+      }
+      
       setLoading(false);
     });
 
@@ -46,7 +73,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signup = async (email: string, password: string) => {
     try {
       setError(null);
-      await createUserWithEmailAndPassword(auth, email, password);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      // Create user document
+      await setDoc(doc(db, 'users', userCredential.user.uid), {
+        role: 'user',
+        email: email,
+        createdAt: new Date().toISOString()
+      });
     } catch (error) {
       const authError = error as AuthError;
       setError(authError.message);
@@ -57,7 +90,22 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (email: string, password: string) => {
     try {
       setError(null);
-      await signInWithEmailAndPassword(auth, email, password);
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
+      
+      // Get user document
+      const userDoc = await getDoc(doc(db, 'users', userCredential.user.uid));
+      
+      if (!userDoc.exists()) {
+        // Create user document if it doesn't exist
+        await setDoc(doc(db, 'users', userCredential.user.uid), {
+          role: 'user',
+          email: email,
+          createdAt: new Date().toISOString()
+        });
+        setIsAdmin(false);
+      } else {
+        setIsAdmin(userDoc.data()?.role === 'admin');
+      }
     } catch (error) {
       const authError = error as AuthError;
       setError(authError.message);
@@ -77,7 +125,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signup, login, logout }}>
+    <AuthContext.Provider value={{ user, isAdmin, loading, error, signup, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
