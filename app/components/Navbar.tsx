@@ -1,15 +1,15 @@
-'use client';
+"use client";
 
-import Link from 'next/link';
-import { usePathname } from 'next/navigation';
-import { ShoppingCartIcon, UserIcon } from '@heroicons/react/24/outline';
-import ThemeSwitcher from './ThemeSwitcher';
-import { useAuth } from '../context/AuthContext';
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { ShoppingCartIcon } from "@heroicons/react/24/outline";
+import ThemeSwitcher from "./ThemeSwitcher";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const { user, logout } = useAuth();
-  const isAdminRoute = pathname?.startsWith('/admin');
+  const isAdminRoute = pathname?.startsWith("/admin");
 
   // Don't show navbar on admin routes
   if (isAdminRoute) {
@@ -20,7 +20,7 @@ export default function Navbar() {
     try {
       await logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
     }
   };
 
@@ -29,55 +29,49 @@ export default function Navbar() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link href="/" className="text-xl font-bold text-blue-600 dark:text-blue-400">
-                E-Commerce
-              </Link>
-            </div>
+            <Link href="/" className="flex items-center">
+              <span className="text-xl font-bold text-gray-900 dark:text-white">
+                E-commerce
+              </span>
+            </Link>
             <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-              <Link
-                href="/"
-                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  pathname === '/'
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
-                }`}
-              >
-                Home
-              </Link>
               <Link
                 href="/products"
                 className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
-                  pathname === '/products'
-                    ? 'border-blue-500 text-gray-900 dark:text-white'
-                    : 'border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200'
+                  pathname === "/products"
+                    ? "border-blue-500 text-gray-900 dark:text-white"
+                    : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200"
                 }`}
               >
                 Products
               </Link>
+              <Link
+                href="/cart"
+                className={`inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium ${
+                  pathname === "/cart"
+                    ? "border-blue-500 text-gray-900 dark:text-white"
+                    : "border-transparent text-gray-500 dark:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600 hover:text-gray-700 dark:hover:text-gray-200"
+                }`}
+              >
+                <ShoppingCartIcon className="h-5 w-5" />
+              </Link>
             </div>
           </div>
-          <div className="hidden sm:ml-6 sm:flex sm:items-center sm:space-x-4">
+          <div className="flex items-center space-x-4">
             <ThemeSwitcher />
-            <Link
-              href="/cart"
-              className="p-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200"
-            >
-              <ShoppingCartIcon className="h-6 w-6" />
-            </Link>
             {user ? (
               <button
                 onClick={handleLogout}
-                className="p-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200"
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <UserIcon className="h-6 w-6" />
+                Logout
               </button>
             ) : (
               <Link
                 href="/login"
-                className="p-2 text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200"
+                className="inline-flex items-center px-3 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
               >
-                <UserIcon className="h-6 w-6" />
+                Login
               </Link>
             )}
           </div>
@@ -85,4 +79,4 @@ export default function Navbar() {
       </div>
     </nav>
   );
-} 
+}
